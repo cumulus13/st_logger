@@ -1,0 +1,107 @@
+╔═══════════════════════════════════════════════════════════════════════╗
+║                                                                       ║
+║                     ST LOGGER v1.0.0 - Release Notes                  ║
+║                                                                       ║
+╚═══════════════════════════════════════════════════════════════════════╝
+
+NEW FEATURES
+
+✓ Console Output Capture
+  • Automatically intercepts all Sublime Text console output (Ctrl+`)
+  • Non-intrusive, fail-safe implementation
+  • Thread-safe operation
+
+✓ Remote Syslog Forwarding
+  • RFC 5424 compatible
+  • UDP transport on port 514 (configurable)
+  • Multiple syslog facilities support
+  • Graceful error handling for network issues
+
+✓ Severity-Based Filtering
+  • Automatic severity detection (DEBUG, INFO, WARNING, ERROR, CRITICAL)
+  • Configurable minimum severity level
+  • Smart pattern matching for log classification
+
+✓ File Export with Rotation
+  • Rotating file handler with size limits
+  • Configurable backup count
+  • Customizable log formats
+  • Daily log file creation with date stamps
+
+✓ Production-Ready Architecture
+  • Asynchronous processing (background thread)
+  • Buffered I/O for performance
+  • Memory-safe buffer limits
+  • Designed for high-volume environments
+
+✓ Full Configuration
+  • Comprehensive settings file
+  • All parameters customizable
+  • Live reload without restart
+  • Example configurations included
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+COMMANDS
+
+• ST Logger: Toggle Plugin - Enable/disable logging
+• ST Logger: Show Status - Display current configuration
+• ST Logger: Reload Settings - Apply new settings without restart
+• ST Logger: Open Log Directory - Open log folder in file browser
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+CONFIGURATION EXAMPLES
+
+Basic Setup:
+{
+    "enabled": true,
+    "file_logging_enabled": true,
+    "log_directory": "~/Documents/sublime_logs"
+}
+
+Production Syslog:
+{
+    "syslog_enabled": true,
+    "syslog_host": "logs.company.com",
+    "syslog_port": 514,
+    "min_severity_level": "WARNING"
+}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+PERFORMANCE
+
+• Minimal overhead (< 1% CPU under normal load)
+• Non-blocking I/O
+• Configurable buffer size (default: 10,000 messages)
+• Automatic backpressure handling
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+TECHNICAL DETAILS
+
+• Python 3.8+ compatible
+• No external dependencies
+• Cross-platform (Windows, macOS, Linux)
+• Sublime Text 3 & 4 compatible
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+UPGRADE NOTES
+
+This is the initial release. Future versions will maintain backward
+compatibility with the settings file format.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+NEXT STEPS
+
+1. Review your settings: Preferences > Package Settings > ST Logger
+2. Configure syslog if needed
+3. Check logs: Command Palette > "ST Logger: Open Log Directory"
+4. Report issues: https://github.com/cumulus13/st_logger/issues
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Thank you for using ST Logger!

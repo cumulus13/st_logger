@@ -1,0 +1,66 @@
+╔═══════════════════════════════════════════════════════════════════════╗
+║                                                                       ║
+║                   ST LOGGER - Successfully Installed!                 ║
+║                                                                       ║
+╚═══════════════════════════════════════════════════════════════════════╝
+
+Thank you for installing ST Logger!
+
+Professional console log capture and remote syslog forwarding for Sublime Text.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+QUICK START
+
+1. The plugin is now ACTIVE and capturing console output
+2. Logs are saved to: ~/.sublime_text_logs/
+3. Configure settings: Preferences > Package Settings > ST Logger > Settings
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+FEATURES
+
+✓ Console Output Capture (Ctrl+`)
+✓ Remote Syslog Forwarding (UDP 514)
+✓ Automatic Severity Detection
+✓ Rotating File Export
+✓ Production-Ready Performance
+✓ Fully Configurable
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+ENABLE REMOTE SYSLOG
+
+Open settings and configure your syslog server:
+
+    {
+        "syslog_enabled": true,
+        "syslog_host": "your-server.com",
+        "syslog_port": 514
+    }
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+COMMANDS (Ctrl+Shift+P)
+
+• ST Logger: Toggle Plugin
+• ST Logger: Show Status
+• ST Logger: Reload Settings
+• ST Logger: Open Log Directory
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+DOCUMENTATION
+
+Full documentation: Preferences > Package Settings > ST Logger > README
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+SUPPORT
+
+Issues: https://github.com/cumulus13/st_logger/issues
+Docs: https://github.com/cumulus13/st_logger
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Happy logging! 🚀

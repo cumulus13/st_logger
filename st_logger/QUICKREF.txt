@@ -1,0 +1,148 @@
+╔═══════════════════════════════════════════════════════════════════════╗
+║                                                                       ║
+║                  ST LOGGER - QUICK REFERENCE CARD                     ║
+║                                                                       ║
+╚═══════════════════════════════════════════════════════════════════════╝
+
+COMMANDS (Ctrl+Shift+P)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+ST Logger: Toggle Plugin          Enable/disable logging
+ST Logger: Show Status             Display configuration
+ST Logger: Reload Settings         Apply changes without restart
+ST Logger: Open Log Directory      Open log folder
+
+MENU ACCESS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Tools → ST Logger → [All Commands]
+
+SETTINGS LOCATION
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Preferences → Package Settings → ST Logger → Settings
+
+QUICK SETUP
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Minimal (File Logging Only):
+{
+    "enabled": true,
+    "file_logging_enabled": true,
+    "log_directory": "~/sublime_logs"
+}
+
+With Remote Syslog:
+{
+    "enabled": true,
+    "syslog_enabled": true,
+    "syslog_host": "logs.example.com",
+    "syslog_port": 514,
+    "file_logging_enabled": true
+}
+
+SEVERITY LEVELS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+DEBUG      Detailed information for debugging
+INFO       General informational messages (default)
+WARNING    Warning messages
+ERROR      Error messages and exceptions
+CRITICAL   Critical failures
+
+Filter by setting:
+{
+    "min_severity_level": "WARNING"
+}
+
+FILE ROTATION
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+{
+    "max_file_size_mb": 10,     // Size before rotation
+    "backup_count": 5            // Number of backups
+}
+
+Creates: sublime_20250207.log, sublime_20250207.log.1, etc.
+
+SYSLOG FACILITIES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+LOG_USER         User-level messages (default)
+LOG_LOCAL0-7     Local use facilities (for custom routing)
+
+COMMON TASKS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+View Today's Logs:
+  Command Palette → "ST Logger: Open Log Directory"
+
+Test Configuration:
+  1. Open console (Ctrl+`)
+  2. Type: print("Test message")
+  3. Check log file
+
+Enable Syslog:
+  Settings → "syslog_enabled": true
+
+Change Log Location:
+  Settings → "log_directory": "/path/to/logs"
+
+Reduce Logging:
+  Settings → "min_severity_level": "ERROR"
+
+TROUBLESHOOTING
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+No logs created?
+  → Check log_directory permissions
+  → Verify "enabled": true in settings
+  → Run: "ST Logger: Show Status"
+
+Syslog not working?
+  → Verify network connectivity
+  → Check firewall allows UDP 514
+  → Test: nc -u <host> <port>
+
+High CPU usage?
+  → Increase "processing_interval": 0.5
+  → Reduce "buffer_max_size": 1000
+  → Set "min_severity_level": "WARNING"
+
+Settings not applying?
+  → Validate JSON syntax
+  → Run: "ST Logger: Reload Settings"
+  → Restart Sublime Text
+
+PERFORMANCE TIPS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Production (Low Overhead):
+{
+    "min_severity_level": "WARNING",
+    "buffer_max_size": 1000,
+    "processing_interval": 0.5
+}
+
+Development (Full Logging):
+{
+    "min_severity_level": "DEBUG",
+    "buffer_max_size": 50000,
+    "processing_interval": 0.05
+}
+
+TESTING
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Run test suite in console (Ctrl+`):
+  import test_st_logger
+  test_st_logger.run_all_tests()
+
+SUPPORT
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Documentation: README.md
+Installation: INSTALL.md
+Issues: github.com/cumulus13/st_logger/issues
+
+═══════════════════════════════════════════════════════════════════════

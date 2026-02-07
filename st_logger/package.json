@@ -1,0 +1,18 @@
+{
+    "name": "ST Logger",
+    "description": "Professional console log capture and remote syslog forwarding for Sublime Text",
+    "author": "ST Logger Contributors",
+    "homepage": "https://github.com/cumulus13/st_logger",
+    "issues": "https://github.com/cumulus13/st_logger/issues",
+    "readme": "https://github.com/cumulus13/st_logger/blob/main/README.md",
+    "previous_names": [],
+    "labels": ["logging", "syslog", "monitoring", "debugging", "console"],
+    "releases": [
+        {
+            "version": "1.0.0",
+            "date": "2025-02-07 00:00:00",
+            "url": "https://github.com/cumulus13/st_logger/releases/tag/1.0.0",
+            "sublime_text": ">=3000"
+        }
+    ]
+}
