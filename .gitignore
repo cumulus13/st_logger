@@ -45,3 +45,5 @@ build/
 
 # Added entries (1 items)
 SUMMARY.md
+# PT backup directory
+.pt/

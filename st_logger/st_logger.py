@@ -30,13 +30,13 @@ class SyslogUDPHandler(logging.handlers.SysLogHandler):
     """Enhanced SysLog handler with better error handling"""
     
     def __init__(self, address, facility=logging.handlers.SysLogHandler.LOG_USER):
-        super().__init__(address=address, facility=facility, socktype=socket.SOCK_DGRAM)
+        logging.handlers.SysLogHandler.__init__(self, address=address, facility=facility, socktype=socket.SOCK_DGRAM)
         self.socket.settimeout(5.0)
     
     def emit(self, record):
         """Override emit to handle connection errors gracefully"""
         try:
-            super().emit(record)
+            logging.handlers.SysLogHandler.emit(self, record)
         except (socket.error, OSError) as e:
             # Silently handle network errors to prevent plugin crashes
             pass
@@ -127,6 +127,7 @@ class StLoggerManager:
         self.processing_thread = None
         self.stop_event = threading.Event()
         self.settings = None
+        self.settings_obj = None
         self.original_stdout = None
         self.original_stderr = None
         self.interceptor_stdout = None
@@ -140,9 +141,20 @@ class StLoggerManager:
             'CRITICAL': logging.CRITICAL
         }
     
+    def on_settings_changed(self):
+        """Called when settings file changes - auto reload"""
+        print("ST Logger: Settings changed, reloading...")
+        sublime.set_timeout_async(self.reload, 100)
+    
     def load_settings(self):
-        """Load plugin settings"""
-        self.settings = sublime.load_settings('STLogger.sublime-settings')
+        """Load plugin settings and setup observer"""
+        self.settings_obj = sublime.load_settings('STLogger.sublime-settings')
+        self.settings = self.settings_obj
+        
+        # Add observer for auto-reload
+        self.settings_obj.clear_on_change('st_logger')
+        self.settings_obj.add_on_change('st_logger', self.on_settings_changed)
+        
         return self.settings
     
     def get_log_directory(self):
@@ -183,9 +195,14 @@ class StLoggerManager:
         if not self.settings.get('enabled', True):
             return
         
-        # Create logger
-        self.logger = logging.getLogger('st_logger')
+        # Create or reset logger
+        if not self.logger:
+            self.logger = logging.getLogger('st_logger')
+        
+        # ALWAYS set logger level to DEBUG so handlers can filter
         self.logger.setLevel(logging.DEBUG)
+        
+        # Clear existing handlers if any
         self.logger.handlers.clear()
         
         # Setup file handler
@@ -288,6 +305,10 @@ class StLoggerManager:
                     # Parse severity
                     severity = self.parse_severity(message)
                     
+                    # ALWAYS read fresh settings on each iteration
+                    if not self.settings:
+                        continue
+                        
                     # Check if severity should be logged
                     min_severity = self.settings.get('min_severity_level', 'DEBUG')
                     min_level = self.severity_map.get(min_severity, logging.DEBUG)
@@ -355,12 +376,68 @@ class StLoggerManager:
             self.syslog_handler.close()
             self.logger.removeHandler(self.syslog_handler)
         
+        # Clear settings observer
+        if self.settings_obj:
+            self.settings_obj.clear_on_change('st_logger')
+        
         print("ST Logger: Stopped")
     
     def reload(self):
         """Reload the logger with new settings"""
-        self.stop()
-        self.start()
+        print("ST Logger: Reloading settings...")
+        
+        # Get current state
+        was_enabled = self.enabled
+        
+        # Force reload settings object
+        self.settings_obj = sublime.load_settings('STLogger.sublime-settings')
+        self.settings = self.settings_obj
+        
+        # Re-attach observer for future changes
+        self.settings_obj.clear_on_change('st_logger')
+        self.settings_obj.add_on_change('st_logger', self.on_settings_changed)
+        
+        should_be_enabled = self.settings.get('enabled', True)
+        
+        # Case 1: Was enabled, should be disabled
+        if was_enabled and not should_be_enabled:
+            self.stop()
+            print("ST Logger: Disabled")
+            return
+        
+        # Case 2: Was disabled, should be enabled
+        if not was_enabled and should_be_enabled:
+            self.start()
+            print("ST Logger: Enabled")
+            return
+        
+        # Case 3: Staying enabled - reconfigure handlers
+        if was_enabled and should_be_enabled:
+            # Remove old handlers
+            if self.logger:
+                if self.file_handler:
+                    try:
+                        self.logger.removeHandler(self.file_handler)
+                        self.file_handler.close()
+                    except:
+                        pass
+                    self.file_handler = None
+                
+                if self.syslog_handler:
+                    try:
+                        self.logger.removeHandler(self.syslog_handler)
+                        self.syslog_handler.close()
+                    except:
+                        pass
+                    self.syslog_handler = None
+            
+            # Setup new handlers with new settings
+            self.setup_logger()
+            print("ST Logger: Settings reloaded successfully")
+        
+        # Case 4: Both disabled - do nothing
+        if not was_enabled and not should_be_enabled:
+            print("ST Logger: Still disabled")
 
 
 # Global manager instance
@@ -400,11 +477,11 @@ class StLoggerToggleCommand(sublime_plugin.ApplicationCommand):
 
 
 class StLoggerReloadCommand(sublime_plugin.ApplicationCommand):
-    """Command to reload logger settings"""
+    """Command to manually reload logger settings (now auto-reloads on save)"""
     
     def run(self):
         logger_manager.reload()
-        sublime.status_message("ST Logger: Settings reloaded")
+        sublime.status_message("ST Logger: Settings reloaded manually")
 
 
 class StLoggerOpenLogDirCommand(sublime_plugin.ApplicationCommand):
