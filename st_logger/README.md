@@ -36,6 +36,7 @@ Professional Sublime Text plugin for capturing console output and forwarding to 
 1. Open Command Palette (`Ctrl+Shift+P` / `Cmd+Shift+P`)
 2. Type "Preferences: ST Logger Settings"
 3. Configure your settings
+4. **Save the file - settings reload automatically!** (no restart needed)
 
 ### Settings Reference
 
@@ -60,7 +61,12 @@ Access settings via: `Preferences > Package Settings > ST Logger > Settings`
     "syslog_facility": "LOG_USER",
     
     // Filtering
-    "min_severity_level": "DEBUG"
+    "min_severity_level": "DEBUG",
+    
+    // Message Exclusion
+    "exclude_wildcards": [],
+    "exclude_patterns": [],
+    "exclude_regex": []
 }
 ```
 
@@ -74,6 +80,53 @@ The plugin automatically detects severity levels from log messages:
 - **INFO**: Informational messages (default for unclassified logs)
 - **DEBUG**: Debug output
 
+### Message Exclusion (Filtering)
+
+Exclude unwanted log messages using three powerful methods:
+
+**1. Wildcard Patterns** (simple and fast):
+```json
+{
+    "exclude_wildcards": [
+        "reloading plugin *",      // Excludes all plugin reload messages
+        "*.pyc",                   // Excludes messages ending with .pyc
+        "Skipped * files"          // Excludes "Skipped 5 files", etc.
+    ]
+}
+```
+
+**2. Substring Patterns** (exact matches, case-insensitive):
+```json
+{
+    "exclude_patterns": [
+        "node_modules",            // Excludes any message containing "node_modules"
+        "vendor",                  // Excludes vendor paths
+        "__pycache__"              // Excludes Python cache messages
+    ]
+}
+```
+
+**3. Regex Patterns** (full power, advanced):
+```json
+{
+    "exclude_regex": [
+        "^Skipped \\d+ files$",                    // Exact match with numbers
+        "\\b(password|token|secret|api_key)\\b",   // Sensitive data
+        "\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}" // IP addresses
+    ]
+}
+```
+
+**Combining Methods**:
+```json
+{
+    "min_severity_level": "INFO",
+    "exclude_wildcards": ["Loading plugin *", "*.tmp"],
+    "exclude_patterns": [".git", "node_modules"],
+    "exclude_regex": ["^DEBUG:.*cache"]
+}
+```
+
 ### Syslog Facilities
 
 Available syslog facilities:
@@ -86,7 +139,7 @@ Available syslog facilities:
 
 - **ST Logger: Toggle Plugin** - Enable/disable the plugin
 - **ST Logger: Show Status** - Display current configuration status
-- **ST Logger: Reload Settings** - Reload configuration without restart
+- **ST Logger: Reload Settings** - Manually reload (settings auto-reload on save anyway)
 - **ST Logger: Open Log Directory** - Open the log directory in file browser
 
 ### Menu Access
@@ -101,6 +154,7 @@ Once enabled, ST Logger automatically:
 3. Forwards to configured syslog server(s)
 4. Exports to log files with rotation
 5. Handles errors gracefully without disrupting Sublime Text
+6. **Auto-reloads settings when you save the settings file** (no restart needed!)
 
 ## Remote Syslog Setup
 

@@ -140,6 +140,67 @@ class StLoggerManager:
             'ERROR': logging.ERROR,
             'CRITICAL': logging.CRITICAL
         }
+        self.exclude_patterns = []
+        self.exclude_regex = []
+    
+    def compile_exclusion_patterns(self):
+        """Compile exclusion patterns from settings"""
+        self.exclude_patterns = []
+        self.exclude_regex = []
+        
+        if not self.settings:
+            return
+        
+        # Get exclusion lists from settings
+        exclude_wildcards = self.settings.get('exclude_wildcards', [])
+        exclude_patterns = self.settings.get('exclude_patterns', [])
+        exclude_regex_list = self.settings.get('exclude_regex', [])
+        
+        # Convert wildcards to regex patterns
+        for wildcard in exclude_wildcards:
+            if wildcard:
+                # Convert wildcard to regex: * -> .*, ? -> .
+                pattern = wildcard.replace('.', r'\.')
+                pattern = pattern.replace('*', '.*')
+                pattern = pattern.replace('?', '.')
+                pattern = '^' + pattern + '$'
+                try:
+                    self.exclude_patterns.append(re.compile(pattern, re.IGNORECASE))
+                except re.error as e:
+                    print("ST Logger: Invalid wildcard pattern '{}': {}".format(wildcard, e))
+        
+        # Compile simple patterns (substring match)
+        for pattern in exclude_patterns:
+            if pattern:
+                try:
+                    self.exclude_patterns.append(re.compile(re.escape(pattern), re.IGNORECASE))
+                except re.error as e:
+                    print("ST Logger: Invalid pattern '{}': {}".format(pattern, e))
+        
+        # Compile regex patterns
+        for regex_pattern in exclude_regex_list:
+            if regex_pattern:
+                try:
+                    self.exclude_regex.append(re.compile(regex_pattern))
+                except re.error as e:
+                    print("ST Logger: Invalid regex '{}': {}".format(regex_pattern, e))
+    
+    def should_exclude_message(self, message):
+        """Check if message should be excluded based on patterns"""
+        if not message:
+            return False
+        
+        # Check wildcard and simple patterns
+        for pattern in self.exclude_patterns:
+            if pattern.search(message):
+                return True
+        
+        # Check regex patterns
+        for regex in self.exclude_regex:
+            if regex.search(message):
+                return True
+        
+        return False
     
     def on_settings_changed(self):
         """Called when settings file changes - auto reload"""
@@ -299,11 +360,29 @@ class StLoggerManager:
                 messages = self.log_buffer.get_all()
                 
                 for message in messages:
-                    if not message.strip():
+                    # Skip empty or whitespace-only messages
+                    if not message or not message.strip():
+                        continue
+                    
+                    stripped_message = message.strip()
+                    
+                    # Skip messages that are just labels without content (e.g., "args: ")
+                    # Check if message ends with colon and has nothing after it
+                    if stripped_message.endswith(':'):
+                        continue
+                    
+                    # Check if message is like "label: " with only whitespace after colon
+                    if ':' in stripped_message:
+                        parts = stripped_message.split(':', 1)
+                        if len(parts) == 2 and not parts[1].strip():
+                            continue
+                    
+                    # Check if message should be excluded
+                    if self.should_exclude_message(stripped_message):
                         continue
                     
                     # Parse severity
-                    severity = self.parse_severity(message)
+                    severity = self.parse_severity(stripped_message)
                     
                     # ALWAYS read fresh settings on each iteration
                     if not self.settings:
@@ -316,7 +395,7 @@ class StLoggerManager:
                     if severity >= min_level:
                         # Log to handlers
                         if self.logger:
-                            self.logger.log(severity, message.strip())
+                            self.logger.log(severity, stripped_message)
                 
                 # Sleep to prevent CPU hogging
                 self.stop_event.wait(0.1)
@@ -332,6 +411,9 @@ class StLoggerManager:
         if not self.settings.get('enabled', True):
             print("ST Logger: Plugin disabled in settings")
             return
+        
+        # Compile exclusion patterns
+        self.compile_exclusion_patterns()
         
         self.setup_logger()
         self.start_interception()
@@ -430,6 +512,9 @@ class StLoggerManager:
                     except:
                         pass
                     self.syslog_handler = None
+            
+            # Recompile exclusion patterns with new settings
+            self.compile_exclusion_patterns()
             
             # Setup new handlers with new settings
             self.setup_logger()

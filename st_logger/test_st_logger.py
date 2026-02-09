@@ -161,6 +161,35 @@ def test_performance_timing():
     print()
 
 
+def test_exclusion_filtering():
+    """Test message exclusion with wildcards, patterns, and regex"""
+    print("=" * 70)
+    print("TEST 11: Message Exclusion Filtering")
+    print("=" * 70)
+    
+    print("NOTE: Configure exclusions in settings to test:")
+    print('  "exclude_wildcards": ["reloading plugin *", "*.pyc"]')
+    print('  "exclude_patterns": ["node_modules", "vendor"]')
+    print('  "exclude_regex": ["^Skipped \\\\d+ files$"]')
+    print()
+    
+    # Messages that SHOULD be excluded (if configured)
+    print("Messages that SHOULD be excluded:")
+    print("  reloading plugin st_logger")
+    print("  compiled file.pyc generated")
+    print("  path/node_modules/package.json")
+    print("  vendor/library/file.js")
+    print("  Skipped 10 files")
+    print()
+    
+    # Messages that should NOT be excluded
+    print("Messages that should NOT be excluded:")
+    print("  ERROR: Failed to load module")
+    print("  WARNING: Memory usage high")
+    print("  INFO: Server started successfully")
+    print()
+
+
 def run_all_tests():
     """Run all test cases"""
     print("\n")
@@ -203,6 +232,9 @@ def run_all_tests():
     time.sleep(0.5)
     
     test_performance_timing()
+    time.sleep(0.5)
+    
+    test_exclusion_filtering()
     
     print("=" * 70)
     print("ALL TESTS COMPLETE")
@@ -212,6 +244,7 @@ def run_all_tests():
     print("2. Messages forwarded to syslog server (if enabled)")
     print("3. Correct severity levels assigned")
     print("4. All message types captured properly")
+    print("5. Excluded messages NOT in logs (if configured)")
     print()
 
 

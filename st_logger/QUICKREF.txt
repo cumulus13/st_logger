@@ -9,8 +9,14 @@ COMMANDS (Ctrl+Shift+P)
 
 ST Logger: Toggle Plugin          Enable/disable logging
 ST Logger: Show Status             Display configuration
-ST Logger: Reload Settings         Apply changes without restart
+ST Logger: Reload Settings         Manual reload (auto-reloads on save!)
 ST Logger: Open Log Directory      Open log folder
+
+AUTO-RELOAD
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Settings automatically reload when you save the settings file!
+No need to restart Sublime Text - just edit and save!
 
 MENU ACCESS
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -53,6 +59,34 @@ CRITICAL   Critical failures
 Filter by setting:
 {
     "min_severity_level": "WARNING"
+}
+
+MESSAGE EXCLUSION
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Exclude unwanted messages using wildcards, patterns, or regex:
+
+Wildcards (* and ?):
+{
+    "exclude_wildcards": [
+        "reloading plugin *",
+        "*.pyc"
+    ]
+}
+
+Substring patterns:
+{
+    "exclude_patterns": [
+        "node_modules",
+        "vendor"
+    ]
+}
+
+Regex patterns:
+{
+    "exclude_regex": [
+        "^Skipped \\d+ files$"
+    ]
 }
 
 FILE ROTATION
@@ -110,9 +144,10 @@ High CPU usage?
   → Set "min_severity_level": "WARNING"
 
 Settings not applying?
+  → Just SAVE the settings file - auto-reloads!
   → Validate JSON syntax
-  → Run: "ST Logger: Reload Settings"
-  → Restart Sublime Text
+  → Check console for errors
+  → Manual reload: "ST Logger: Reload Settings"
 
 PERFORMANCE TIPS
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━

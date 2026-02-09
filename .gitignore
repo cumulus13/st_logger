@@ -47,3 +47,8 @@ build/
 SUMMARY.md
 # PT backup directory
 .pt/
+
+# Added entries (3 items)
+temp
+*sublime-project
+*sublime-workspace
